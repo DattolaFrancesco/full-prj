@@ -7,6 +7,22 @@ on:
 jobs:
   test:
     runs-on: ubuntu-24.04
+    services:
+      db:
+        image: postgres:17
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: appdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U app -d appdb"
+          --health-interval 2s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://app:secret@localhost:5432/appdb
+
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
